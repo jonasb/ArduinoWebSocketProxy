@@ -15,6 +15,8 @@ import java.nio.ByteBuffer;
 public class Accessory {
     public interface Callback {
         void onReadFromAccessory(byte[] buf);
+
+        void onAccessoryError();
     }
 
     private static final String TAG = Accessory.class.getSimpleName();
@@ -32,31 +34,37 @@ public class Accessory {
         final Thread readerThread = new Thread("AccessoryReader") {
             @Override
             public void run() {
-                while (mInputStream != null) {
-                    final ByteBuffer buffer = ByteBuffer.allocate(16384);
+                final ByteBuffer buffer = ByteBuffer.allocate(16384);
+                while (true) {
+                    final FileInputStream stream = mInputStream;
+                    if (stream == null) {
+                        break;
+                    }
                     try {
-                        final int b = mInputStream.read();
-                        if (b == -1) {
-                            Log.d(TAG, "EOF");
+                        // read blocking
+                        // https://groups.google.com/forum/?fromgroups=#!topic/android-developers/GJdCyieD8DY
+                        final int read = stream.read(buffer.array());
+                        if (read < 0) {
                             break;
                         }
-                        buffer.put((byte) b);
-                        final int size = mInputStream.read(buffer.array(), buffer.position(), buffer.remaining()) + buffer.position();
-                        final byte[] buf = new byte[size];
+
+                        // report read data
+                        final byte[] buf = new byte[read];
                         buffer.position(0);
                         buffer.get(buf);
                         callback.onReadFromAccessory(buf);
 
                     } catch (final IOException e) {
-                        Log.d(TAG, "Error while reading from accessory", e);
+                        Log.e(TAG, "Error while reading from accessory", e);
+                        break;
                     }
                 }
 
-                Log.d(TAG, "Shutting down accessory reader thread");
+                callback.onAccessoryError();
             };
         };
-        readerThread.start();
 
+        readerThread.start();
     }
 
     public void close() {

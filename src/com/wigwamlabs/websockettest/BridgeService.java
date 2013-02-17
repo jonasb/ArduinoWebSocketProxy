@@ -96,6 +96,12 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
         mWebSocketServer.send(buf);
     }
 
+    @Override
+    public void onAccessoryError() {
+        Log.d(TAG, "onAccessoryError()");
+        closeAccessory();
+    }
+
     private void startWebSocketServer() {
         if (mWebSocketServer != null) {
             return;

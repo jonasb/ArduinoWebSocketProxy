@@ -39,6 +39,8 @@ public class MainActivity extends Activity implements ServiceConnection {
 
         if (mAccessory != null) {
             mService.openAccessory(mAccessory);
+
+            // WebSocketClient.sendMessageAndWaitForAnswer("Hello from client");
         }
     }
 
