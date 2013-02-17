@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <usb-accessory
+        manufacturer="Wigwam Labs"
+        model="test"
+        version="1.0" />
+
+</resources>
