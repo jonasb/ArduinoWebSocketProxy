@@ -11,7 +11,15 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class BridgeService extends Service implements Accessory.Callback, WebSocketServer.Callback {
+    interface Callback {
+        void onAccessoryState(boolean connected);
+
+        void onWebSocketState(boolean running);
+    }
+
     public class LocalBinder extends Binder {
         public BridgeService getService() {
             return BridgeService.this;
@@ -23,6 +31,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     private Accessory mAccessory;
     private BroadcastReceiver mAccessoryDetachedBroadcastReceiver;
     private WebSocketServer mWebSocketServer;
+    private final ArrayList<Callback> mCallbacks = new ArrayList<Callback>();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -44,11 +53,37 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
         closeWebSocketServer();
     }
 
+    void addCallback(Callback callback) {
+        if (!mCallbacks.contains(callback)) {
+            mCallbacks.add(callback);
+
+            notifyAccessoryStateChanged();
+            notifyWebSocketStateChanged();
+        }
+    }
+
+    void removeCallback(Callback callback) {
+        mCallbacks.remove(callback);
+    }
+
+    private void notifyWebSocketStateChanged() {
+        for (final Callback c : mCallbacks) {
+            c.onWebSocketState(mWebSocketServer != null);
+        }
+    }
+
+    private void notifyAccessoryStateChanged() {
+        for (final Callback c : mCallbacks) {
+            c.onAccessoryState(mAccessory != null);
+        }
+    }
+
     void openAccessory(final UsbAccessory accessory) {
         if (mAccessory != null) {
             mAccessory.close();
         }
         mAccessory = new Accessory(this, accessory, this);
+        notifyAccessoryStateChanged();
 
         mAccessoryDetachedBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -108,6 +143,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
         }
 
         mWebSocketServer = new WebSocketServer(this);
+        notifyWebSocketStateChanged();
     }
 
     private void closeWebSocketServer() {
@@ -118,6 +154,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
                 Log.e(TAG, "Exception when closing server", e);
             }
             mWebSocketServer = null;
+            notifyWebSocketStateChanged();
         }
     }
 

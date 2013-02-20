@@ -3,6 +3,11 @@
 
     <string name="app_name">WebSocketTest</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="arduino_label">Arduino:</string>
+    <string name="accessory_connected">CONNECTED</string>
+    <string name="accessory_disconnected">DISCONNECTED</string>
+    <string name="websocket_label">WebSocket:</string>
+    <string name="websocket_running">RUNNING</string>
+    <string name="websocket_stopped">STOPPED</string>
 
 </resources>

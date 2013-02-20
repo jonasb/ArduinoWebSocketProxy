@@ -9,8 +9,33 @@
     tools:context=".MainActivity" >
 
     <TextView
+        android:id="@+id/arduino"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:text="@string/arduino_label"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/arduinoState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/arduino"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:id="@+id/websocket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/arduino"
+        android:layout_marginTop="16dp"
+        android:text="@string/websocket_label"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/websocketState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/websocket"
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>

@@ -10,17 +10,23 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.TextView;
 
 import com.wigwamlabs.websockettest.BridgeService.LocalBinder;
 
-public class MainActivity extends Activity implements ServiceConnection {
+public class MainActivity extends Activity implements ServiceConnection, BridgeService.Callback {
     protected BridgeService mService;
     private UsbAccessory mAccessory;
+    private TextView mArduinoState;
+    private TextView mWebSocketState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mArduinoState = (TextView) findViewById(R.id.arduinoState);
+        mWebSocketState = (TextView) findViewById(R.id.websocketState);
 
         bindBridgeService();
 
@@ -37,6 +43,8 @@ public class MainActivity extends Activity implements ServiceConnection {
         final LocalBinder binder = (LocalBinder) service;
         mService = binder.getService();
 
+        mService.addCallback(this);
+
         if (mAccessory != null) {
             mService.openAccessory(mAccessory);
 
@@ -50,6 +58,24 @@ public class MainActivity extends Activity implements ServiceConnection {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mService != null) {
+            mService.addCallback(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mService != null) {
+            mService.removeCallback(this);
+        }
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d("XXX", "onNewIntent()");
@@ -60,5 +86,15 @@ public class MainActivity extends Activity implements ServiceConnection {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public void onAccessoryState(boolean connected) {
+        mArduinoState.setText(connected ? R.string.accessory_connected : R.string.accessory_disconnected);
+    }
+
+    @Override
+    public void onWebSocketState(boolean running) {
+        mWebSocketState.setText(running ? R.string.websocket_running : R.string.websocket_stopped);
     }
 }
