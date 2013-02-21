@@ -9,7 +9,6 @@ import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -18,7 +17,6 @@ import com.wigwamlabs.websockettest.BridgeService.LocalBinder;
 
 public class MainActivity extends Activity implements ServiceConnection, BridgeService.Callback {
     protected BridgeService mService;
-    private UsbAccessory mAccessory;
     private TextView mArduinoState;
     private TextView mWebSocketState;
     private TextView mWebSocketAddress;
@@ -37,9 +35,30 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         mLogWriteToAccessory = (TextView) findViewById(R.id.logWriteToAccessory);
 
         bindBridgeService();
+    }
 
-        final Intent intent = getIntent();
-        mAccessory = (UsbAccessory) intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+
+        openAccessoryIfNeeded(getAccessoryFromIntent());
+    }
+
+    private UsbAccessory getAccessoryFromIntent() {
+        return (UsbAccessory) getIntent().getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
+    }
+
+    private void openAccessoryIfNeeded(UsbAccessory accessory) {
+        if (mService == null) {
+            return;
+        }
+
+        if (accessory != null) {
+            mService.openAccessory(accessory);
+
+            // WebSocketClient.sendMessageAndWaitForAnswer("Hello from client");
+        }
     }
 
     private void bindBridgeService() {
@@ -53,11 +72,7 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
 
         mService.addCallback(this);
 
-        if (mAccessory != null) {
-            mService.openAccessory(mAccessory);
-
-            // WebSocketClient.sendMessageAndWaitForAnswer("Hello from client");
-        }
+        openAccessoryIfNeeded(getAccessoryFromIntent());
     }
 
     @Override
@@ -81,12 +96,6 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         if (mService != null) {
             mService.removeCallback(this);
         }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.d("XXX", "onNewIntent()");
     }
 
     @Override
