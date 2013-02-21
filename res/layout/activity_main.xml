@@ -38,4 +38,15 @@
         android:layout_alignBaseline="@id/websocket"
         android:layout_alignParentRight="true" />
 
+    <TextView
+        android:id="@+id/websocketAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/websocket"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:textIsSelectable="true"
+        android:typeface="monospace"
+        android:visibility="gone" />
+
 </RelativeLayout>

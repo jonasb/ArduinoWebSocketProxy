@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.TextView;
 
 import com.wigwamlabs.websockettest.BridgeService.LocalBinder;
@@ -20,6 +21,7 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     private UsbAccessory mAccessory;
     private TextView mArduinoState;
     private TextView mWebSocketState;
+    private TextView mWebSocketAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,7 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
 
         mArduinoState = (TextView) findViewById(R.id.arduinoState);
         mWebSocketState = (TextView) findViewById(R.id.websocketState);
+        mWebSocketAddress = (TextView) findViewById(R.id.websocketAddress);
 
         bindBridgeService();
 
@@ -101,5 +104,13 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         final Resources res = getResources();
         mWebSocketState.setText(running ? res.getQuantityString(R.plurals.websocket_running, clients, clients) : res.getString(R.string.websocket_stopped));
         mWebSocketState.setTextColor(res.getColor(running ? R.color.green : R.color.red));
+
+        if (running) {
+            mWebSocketAddress.setText(String.format("ws://%s:%d", NetworkUtils.getIPAddress(), 8080));
+            mWebSocketAddress.setVisibility(View.VISIBLE);
+        } else {
+            mWebSocketAddress.setVisibility(View.GONE);
+        }
+
     }
 }
