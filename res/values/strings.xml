@@ -14,5 +14,7 @@
     </plurals>
 
     <string name="websocket_stopped">STOPPED</string>
+    <string name="log_to_accessory">To accessory:</string>
+    <string name="log_from_accessory">From accessory:</string>
 
 </resources>

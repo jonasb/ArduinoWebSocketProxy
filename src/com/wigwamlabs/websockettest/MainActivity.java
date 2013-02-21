@@ -22,6 +22,8 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     private TextView mArduinoState;
     private TextView mWebSocketState;
     private TextView mWebSocketAddress;
+    private TextView mLogReadFromAccessory;
+    private TextView mLogWriteToAccessory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,8 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         mArduinoState = (TextView) findViewById(R.id.arduinoState);
         mWebSocketState = (TextView) findViewById(R.id.websocketState);
         mWebSocketAddress = (TextView) findViewById(R.id.websocketAddress);
+        mLogReadFromAccessory = (TextView) findViewById(R.id.logReadFromAccessory);
+        mLogWriteToAccessory = (TextView) findViewById(R.id.logWriteToAccessory);
 
         bindBridgeService();
 
@@ -111,6 +115,23 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         } else {
             mWebSocketAddress.setVisibility(View.GONE);
         }
+    }
 
+    @Override
+    public void onReadFromAccessory(byte[] bytes) {
+        updateLog(mLogReadFromAccessory, bytes);
+    }
+
+    @Override
+    public void onWriteToAccessory(byte[] bytes) {
+        updateLog(mLogWriteToAccessory, bytes);
+    }
+
+    private void updateLog(TextView log, byte[] bytes) {
+        final StringBuilder sb = new StringBuilder();
+        for (final byte b : bytes) {
+            sb.append(String.format("%02x ", b));
+        }
+        log.append(sb.toString());
     }
 }

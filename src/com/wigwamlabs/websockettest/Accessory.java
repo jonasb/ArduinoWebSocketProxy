@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 
 public class Accessory {
     public interface Callback {
-        void onReadFromAccessory(byte[] buf);
+        void onReadFromAccessory(byte[] bytes);
 
         void onAccessoryError();
     }

@@ -19,6 +19,10 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
         void onAccessoryState(boolean connected);
 
         void onWebSocketState(boolean running, int clients);
+
+        void onWriteToAccessory(byte[] bytes);
+
+        void onReadFromAccessory(byte[] bytes);
     }
 
     public class LocalBinder extends Binder {
@@ -125,13 +129,19 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
         Log.d(TAG, "writeToAccessory() " + new String(bytes));
         if (mAccessory != null) {
             mAccessory.write(bytes);
+            for (final Callback c : mCallbacks) {
+                c.onWriteToAccessory(bytes);
+            }
         }
     }
 
     @Override
-    public void onReadFromAccessory(byte[] buf) {
-        Log.d(TAG, "onReadFromAccessory() " + new String(buf));
-        mWebSocketServer.send(buf);
+    public void onReadFromAccessory(byte[] bytes) {
+        Log.d(TAG, "onReadFromAccessory() " + new String(bytes));
+        mWebSocketServer.send(bytes);
+        for (final Callback c : mCallbacks) {
+            c.onReadFromAccessory(bytes);
+        }
     }
 
     @Override
