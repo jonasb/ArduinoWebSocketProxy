@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
@@ -90,11 +91,15 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
 
     @Override
     public void onAccessoryState(boolean connected) {
+        final Resources res = getResources();
         mArduinoState.setText(connected ? R.string.accessory_connected : R.string.accessory_disconnected);
+        mArduinoState.setTextColor(res.getColor(connected ? R.color.green : R.color.red));
     }
 
     @Override
-    public void onWebSocketState(boolean running) {
-        mWebSocketState.setText(running ? R.string.websocket_running : R.string.websocket_stopped);
+    public void onWebSocketState(boolean running, int clients) {
+        final Resources res = getResources();
+        mWebSocketState.setText(running ? res.getQuantityString(R.plurals.websocket_running, clients, clients) : res.getString(R.string.websocket_stopped));
+        mWebSocketState.setTextColor(res.getColor(running ? R.color.green : R.color.red));
     }
 }

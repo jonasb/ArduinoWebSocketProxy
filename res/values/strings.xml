@@ -7,7 +7,12 @@
     <string name="accessory_connected">CONNECTED</string>
     <string name="accessory_disconnected">DISCONNECTED</string>
     <string name="websocket_label">WebSocket:</string>
-    <string name="websocket_running">RUNNING</string>
+
+    <plurals name="websocket_running">
+        <item quantity="one">RUNNING, 1 client</item>
+        <item quantity="other">RUNNING, %d clients</item>
+    </plurals>
+
     <string name="websocket_stopped">STOPPED</string>
 
 </resources>

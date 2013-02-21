@@ -11,13 +11,14 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class BridgeService extends Service implements Accessory.Callback, WebSocketServer.Callback {
     interface Callback {
         void onAccessoryState(boolean connected);
 
-        void onWebSocketState(boolean running);
+        void onWebSocketState(boolean running, int clients);
     }
 
     public class LocalBinder extends Binder {
@@ -67,8 +68,9 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     }
 
     private void notifyWebSocketStateChanged() {
+        final int clients = (mWebSocketServer == null ? 0 : mWebSocketServer.getClientCount());
         for (final Callback c : mCallbacks) {
-            c.onWebSocketState(mWebSocketServer != null);
+            c.onWebSocketState(mWebSocketServer != null, clients);
         }
     }
 
@@ -108,8 +110,9 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     private void closeAccessory() {
         if (mAccessory != null) {
             mAccessory.close();
+            mAccessory = null;
+            notifyAccessoryStateChanged();
         }
-        mAccessory = null;
         if (mAccessoryDetachedBroadcastReceiver != null) {
             unregisterReceiver(mAccessoryDetachedBroadcastReceiver);
             mAccessoryDetachedBroadcastReceiver = null;
@@ -159,7 +162,17 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     }
 
     @Override
+    public void onWebSocketConnectionsChanged() {
+        notifyWebSocketStateChanged();
+    }
+
+    @Override
     public void onWebSocketMessage(String message) {
         writeToAccessory(message.getBytes());
+    }
+
+    @Override
+    public void onWebSocketMessage(ByteBuffer message) {
+        writeToAccessory(message.array()); // TODO whole array?
     }
 }

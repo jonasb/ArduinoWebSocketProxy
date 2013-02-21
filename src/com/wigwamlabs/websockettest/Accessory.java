@@ -3,6 +3,7 @@ package com.wigwamlabs.websockettest;
 import android.content.Context;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
@@ -23,6 +24,7 @@ public class Accessory {
     private final ParcelFileDescriptor mFileDescriptor;
     private FileInputStream mInputStream;
     private FileOutputStream mOutputStream;
+    private final Handler mHandler = new Handler();
 
     public Accessory(Context context, UsbAccessory accessory, final Callback callback) {
         final UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -52,7 +54,12 @@ public class Accessory {
                         final byte[] buf = new byte[read];
                         buffer.position(0);
                         buffer.get(buf);
-                        callback.onReadFromAccessory(buf);
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onReadFromAccessory(buf);
+                            }
+                        });
 
                     } catch (final IOException e) {
                         Log.e(TAG, "Error while reading from accessory", e);
@@ -60,7 +67,12 @@ public class Accessory {
                     }
                 }
 
-                callback.onAccessoryError();
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onAccessoryError();
+                    }
+                });
             };
         };
 
