@@ -103,7 +103,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
 
     void openAccessory(final UsbAccessory accessory) {
         if (mAccessory != null) {
-            mAccessory.close();
+            return;
         }
         mAccessory = new Accessory(this, accessory, this);
         notifyAccessoryStateChanged();
