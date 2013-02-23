@@ -39,6 +39,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     private WebSocketServer mWebSocketServer;
     private final ArrayList<Callback> mCallbacks = new ArrayList<Callback>();
     private final Handler mHandler = new Handler();
+    private int mClientCount;
 
     @Override
     public void onCreate() {
@@ -48,7 +49,22 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
 
     @Override
     public IBinder onBind(Intent intent) {
+        mClientCount++;
         return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mClientCount--;
+
+        stopSelfIfPossible();
+
+        return true;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        mClientCount++;
     }
 
     @Override
@@ -61,15 +77,15 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     }
 
     private void stopSelfIfPossible() {
-        if (mAccessory == null && mCallbacks.size() == 0) {
+        if (mAccessory == null && mClientCount == 0) {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (mAccessory == null && mCallbacks.size() == 0) {
+                    if (mAccessory == null && mClientCount == 0) {
                         stopSelf();
                     }
                 }
-            }, 1000);
+            }, 10000);
         }
     }
 
@@ -84,8 +100,6 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
 
     void removeCallback(Callback callback) {
         mCallbacks.remove(callback);
-
-        stopSelfIfPossible();
     }
 
     private void notifyWebSocketStateChanged() {
