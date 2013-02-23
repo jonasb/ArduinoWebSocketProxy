@@ -120,6 +120,15 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         final Resources res = getResources();
         mArduinoState.setText(connected ? R.string.accessory_connected : R.string.accessory_disconnected);
         mArduinoState.setTextColor(res.getColor(connected ? R.color.green : R.color.red));
+
+        if (!connected) {
+            if (mLogWriteToAccessory.getText().length() > 0) {
+                mLogWriteToAccessory.append("\n--------------------");
+            }
+            if (mLogReadFromAccessory.getText().length() > 0) {
+                mLogReadFromAccessory.append("\n--------------------");
+            }
+        }
     }
 
     @Override
@@ -148,6 +157,10 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
 
     private void updateLog(TextView log, byte[] bytes) {
         final StringBuilder sb = new StringBuilder();
+        final CharSequence existingText = log.getText();
+        if (existingText.length() > 0 && existingText.charAt(existingText.length() - 1) == '-') {
+            sb.append("\n");
+        }
         for (final byte b : bytes) {
             sb.append(String.format("%02x ", b));
         }
