@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.wigwamlabs.websockettest.BridgeService.LocalBinder;
@@ -26,13 +27,17 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d("XXX", "MainActivity.onCreate()");
         setContentView(R.layout.activity_main);
 
         mArduinoState = (TextView) findViewById(R.id.arduinoState);
         mWebSocketState = (TextView) findViewById(R.id.websocketState);
         mWebSocketAddress = (TextView) findViewById(R.id.websocketAddress);
         mLogReadFromAccessory = (TextView) findViewById(R.id.logReadFromAccessory);
+        scrollToBottom(mLogReadFromAccessory);
         mLogWriteToAccessory = (TextView) findViewById(R.id.logWriteToAccessory);
+        scrollToBottom(mLogWriteToAccessory);
 
         bindBridgeService();
     }
@@ -123,10 +128,10 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
 
         if (!connected) {
             if (mLogWriteToAccessory.getText().length() > 0) {
-                mLogWriteToAccessory.append("\n--------------------");
+                appendToLog(mLogWriteToAccessory, "\n--------------------");
             }
             if (mLogReadFromAccessory.getText().length() > 0) {
-                mLogReadFromAccessory.append("\n--------------------");
+                appendToLog(mLogReadFromAccessory, "\n--------------------");
             }
         }
     }
@@ -155,15 +160,40 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         updateLog(mLogWriteToAccessory, bytes);
     }
 
-    private void updateLog(TextView log, byte[] bytes) {
+    private void updateLog(final TextView log, byte[] bytes) {
         final StringBuilder sb = new StringBuilder();
         final CharSequence existingText = log.getText();
-        if (existingText.length() > 0 && existingText.charAt(existingText.length() - 1) == '-') {
-            sb.append("\n");
+        if (existingText.length() > 0) {
+            if (existingText.charAt(existingText.length() - 1) == '-') {
+                sb.append('\n');
+            } else {
+                sb.append(' ');
+            }
         }
+        boolean first = true;
         for (final byte b : bytes) {
-            sb.append(String.format("%02x ", b));
+            if (first) {
+                first = false;
+            } else {
+                sb.append(' ');
+            }
+            sb.append(String.format("%02x", b));
         }
-        log.append(sb.toString());
+        appendToLog(log, sb.toString());
+    }
+
+    private void appendToLog(final TextView log, final String text) {
+        log.append(text);
+        scrollToBottom(log);
+    }
+
+    private void scrollToBottom(final TextView log) {
+        final ScrollView scroller = (ScrollView) log.getParent();
+        scroller.post(new Runnable() {
+            @Override
+            public void run() {
+                scroller.smoothScrollTo(0, log.getBottom());
+            }
+        });
     }
 }

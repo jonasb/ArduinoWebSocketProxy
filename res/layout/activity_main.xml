@@ -62,13 +62,18 @@
             android:text="@string/log_to_accessory"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:id="@+id/logWriteToAccessory"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="1.0"
-            android:textIsSelectable="true"
-            android:typeface="monospace" />
+            android:layout_weight="1.0" >
+
+            <TextView
+                android:id="@+id/logWriteToAccessory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true"
+                android:typeface="monospace" />
+        </ScrollView>
 
         <TextView
             android:layout_width="wrap_content"
@@ -76,13 +81,18 @@
             android:text="@string/log_from_accessory"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:id="@+id/logReadFromAccessory"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="1.0"
-            android:textIsSelectable="true"
-            android:typeface="monospace" />
+            android:layout_weight="1.0" >
+
+            <TextView
+                android:id="@+id/logReadFromAccessory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true"
+                android:typeface="monospace" />
+        </ScrollView>
     </LinearLayout>
 
 </RelativeLayout>
