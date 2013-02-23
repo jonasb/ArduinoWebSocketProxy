@@ -62,7 +62,9 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     }
 
     private void bindBridgeService() {
-        bindService(new Intent(this, BridgeService.class), this, BIND_AUTO_CREATE);
+        final Intent intent = new Intent(this, BridgeService.class);
+        startService(intent);
+        bindService(intent, this, BIND_AUTO_CREATE);
     }
 
     @Override
@@ -96,6 +98,14 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         if (mService != null) {
             mService.removeCallback(this);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        unbindService(this);
+        mService = null;
     }
 
     @Override

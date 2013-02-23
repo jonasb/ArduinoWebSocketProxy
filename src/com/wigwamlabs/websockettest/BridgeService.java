@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -37,16 +38,17 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     private BroadcastReceiver mAccessoryDetachedBroadcastReceiver;
     private WebSocketServer mWebSocketServer;
     private final ArrayList<Callback> mCallbacks = new ArrayList<Callback>();
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
+    private final Handler mHandler = new Handler();
 
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate()");
         super.onCreate();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
     }
 
     @Override
@@ -56,6 +58,19 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
 
         closeAccessory();
         closeWebSocketServer();
+    }
+
+    private void stopSelfIfPossible() {
+        if (mAccessory == null && mCallbacks.size() == 0) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mAccessory == null && mCallbacks.size() == 0) {
+                        stopSelf();
+                    }
+                }
+            }, 1000);
+        }
     }
 
     void addCallback(Callback callback) {
@@ -69,6 +84,8 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
 
     void removeCallback(Callback callback) {
         mCallbacks.remove(callback);
+
+        stopSelfIfPossible();
     }
 
     private void notifyWebSocketStateChanged() {
@@ -123,6 +140,8 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
         }
 
         closeWebSocketServer();
+
+        stopSelfIfPossible();
     }
 
     public void writeToAccessory(byte[] bytes) {
