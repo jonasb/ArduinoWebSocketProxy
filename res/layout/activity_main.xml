@@ -26,15 +26,16 @@
         <TextView
             android:id="@+id/arduinoState"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/connectAccessoryButton"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/accessory_connect"
-            android:visibility="gone" />
+            android:text="@string/accessory_disconnected"
+            android:textColor="@color/red"
+            android:textStyle="bold" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#ccc" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,8 +55,16 @@
         <TextView
             android:id="@+id/websocketState"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/websocket_stopped"
+            android:textColor="@color/red"
+            android:textStyle="bold" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#ccc" />
 
     <TextView
         android:id="@+id/websocketAddress"
@@ -67,42 +76,77 @@
         android:typeface="monospace"
         android:visibility="gone" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/log_to_accessory"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/logContainer"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1.0" >
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/logWriteToAccessory"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textIsSelectable="true"
-            android:typeface="monospace" />
-    </ScrollView>
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/log_from_accessory"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/log_to_accessory"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1.0" >
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#ccc" />
 
-        <TextView
-            android:id="@+id/logReadFromAccessory"
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1.0"
+                android:background="#2ccc" >
+
+                <TextView
+                    android:id="@+id/logWriteToAccessory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textIsSelectable="true"
+                    android:typeface="monospace" />
+            </ScrollView>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textIsSelectable="true"
-            android:typeface="monospace" />
-    </ScrollView>
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/log_from_accessory"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#ccc" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1.0"
+                android:background="#2ccc" >
+
+                <TextView
+                    android:id="@+id/logReadFromAccessory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textIsSelectable="true"
+                    android:typeface="monospace" />
+            </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

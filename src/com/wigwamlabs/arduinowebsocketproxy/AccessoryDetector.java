@@ -59,7 +59,7 @@ public class AccessoryDetector {
     public void setEnabled(boolean enabled) {
         if (enabled) {
             if (!mHandler.hasMessages(MESSAGE_CHECK_ACCESSORY)) {
-                mHandler.sendEmptyMessageDelayed(MESSAGE_CHECK_ACCESSORY, TIME_BETWEEN_CHECKS_MS);
+                mHandler.sendEmptyMessage(MESSAGE_CHECK_ACCESSORY);
             }
         } else {
             mHandler.removeMessages(MESSAGE_CHECK_ACCESSORY);

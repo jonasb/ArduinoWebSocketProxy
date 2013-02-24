@@ -10,8 +10,10 @@ import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -23,28 +25,22 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     private static final int ACCESSORY_AVAILABLE = 2;
     protected BridgeService mService;
     private TextView mArduinoState;
-    private View mConnectButton;
     private TextView mWebSocketState;
     private TextView mWebSocketAddress;
     private TextView mLogReadFromAccessory;
     private TextView mLogWriteToAccessory;
     private AccessoryDetector mAccessoryDetector;
     private int mAccessoryState = ACCESSORY_DISCONNECTED;
+    private MenuItem mConnectMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Resources res = getResources();
 
         setContentView(R.layout.activity_main);
 
         mArduinoState = (TextView) findViewById(R.id.arduinoState);
-        mConnectButton = findViewById(R.id.connectAccessoryButton);
-        mConnectButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                connectToAccessory();
-            }
-        });
         mWebSocketState = (TextView) findViewById(R.id.websocketState);
         mWebSocketAddress = (TextView) findViewById(R.id.websocketAddress);
         mLogReadFromAccessory = (TextView) findViewById(R.id.logReadFromAccessory);
@@ -52,10 +48,34 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         mLogWriteToAccessory = (TextView) findViewById(R.id.logWriteToAccessory);
         scrollToBottom(mLogWriteToAccessory);
 
+        if (res.getBoolean(R.bool.layoutLogsHorizontally)) {
+            layoutLogsHorizontally(res);
+        }
+
         // TODO move to service
         mAccessoryDetector = new AccessoryDetector(this);
 
         bindBridgeService();
+    }
+
+    private void layoutLogsHorizontally(Resources res) {
+        final LinearLayout logContainer = (LinearLayout) findViewById(R.id.logContainer);
+        logContainer.setOrientation(LinearLayout.HORIZONTAL);
+        final int margin = res.getDimensionPixelOffset(R.dimen.margin_between_logs_horizontally);
+
+        final int childCount = logContainer.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = logContainer.getChildAt(i);
+            final LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) child.getLayoutParams();
+            params.height = LayoutParams.MATCH_PARENT;
+            params.width = 0;
+            if (i > 0) {
+                params.leftMargin = margin;
+            }
+            if (i < childCount - 1) {
+                params.rightMargin = margin;
+            }
+        }
     }
 
     @Override
@@ -135,9 +155,18 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        mConnectMenuItem = menu.findItem(R.id.action_connect);
         return true;
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        if (item.getItemId() == R.id.action_connect) {
+            connectToAccessory();
+            return true;
+        }
+        return super.onMenuItemSelected(featureId, item);
     }
 
     @Override
@@ -173,9 +202,9 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     }
 
     private void updateAccessoryStateConnectVisibility() {
-        final boolean showConnect = (mAccessoryState == ACCESSORY_AVAILABLE);
-        mConnectButton.setVisibility(showConnect ? View.VISIBLE : View.GONE);
-        mArduinoState.setVisibility(showConnect ? View.GONE : View.VISIBLE);
+        if (mConnectMenuItem != null) {
+            mConnectMenuItem.setVisible(mAccessoryState == ACCESSORY_AVAILABLE);
+        }
     }
 
     protected void connectToAccessory() {
@@ -189,8 +218,9 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         mWebSocketState.setTextColor(res.getColor(running ? R.color.green : R.color.red));
 
         if (running) {
-            mWebSocketAddress.setText(String.format("ws://%s:%d", NetworkUtils.getIPAddress(), 8080));
-            mWebSocketAddress.setVisibility(View.VISIBLE);
+            final String ipAddress = NetworkUtils.getIPAddress();
+            mWebSocketAddress.setText(String.format("ws://%s:%d", ipAddress, 8080));
+            mWebSocketAddress.setVisibility(ipAddress.length() > 0 ? View.VISIBLE : View.GONE);
         } else {
             mWebSocketAddress.setVisibility(View.GONE);
         }
