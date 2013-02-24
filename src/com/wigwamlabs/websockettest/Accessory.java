@@ -25,8 +25,10 @@ public class Accessory {
     private FileInputStream mInputStream;
     private FileOutputStream mOutputStream;
     private final Handler mHandler = new Handler();
+    private final Callback mCallback;
 
-    public Accessory(Context context, UsbAccessory accessory, final Callback callback) {
+    public Accessory(Context context, UsbAccessory accessory, Callback callback) {
+        mCallback = callback;
         final UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         mFileDescriptor = manager.openAccessory(accessory);
         final FileDescriptor fd = mFileDescriptor.getFileDescriptor();
@@ -57,7 +59,7 @@ public class Accessory {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onReadFromAccessory(buf);
+                                mCallback.onReadFromAccessory(buf);
                             }
                         });
 
@@ -70,7 +72,7 @@ public class Accessory {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onAccessoryError();
+                        mCallback.onAccessoryError();
                     }
                 });
             };
@@ -98,6 +100,7 @@ public class Accessory {
                 mOutputStream.write(bytes);
             } catch (final IOException e) {
                 Log.e(TAG, "Exception when writing to accessory", e);
+                mCallback.onAccessoryError();
             }
         }
     }

@@ -1,98 +1,108 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:id="@+id/arduino"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/arduino_label"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:baselineAligned="true"
+        android:orientation="horizontal" >
 
-    <TextView
-        android:id="@+id/arduinoState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/arduino"
-        android:layout_alignParentRight="true" />
+        <TextView
+            android:id="@+id/arduino"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:text="@string/arduino_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:id="@+id/websocket"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/arduinoState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/connectAccessoryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/accessory_connect"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/arduino"
         android:layout_marginTop="16dp"
-        android:text="@string/websocket_label"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:baselineAligned="true"
+        android:orientation="horizontal" >
 
-    <TextView
-        android:id="@+id/websocketState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/websocket"
-        android:layout_alignParentRight="true" />
+        <TextView
+            android:id="@+id/websocket"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:text="@string/websocket_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/websocketState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/websocketAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/websocket"
-        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="6dp"
         android:textIsSelectable="true"
         android:typeface="monospace"
         android:visibility="gone" />
 
-    <LinearLayout
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/log_to_accessory"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/websocketAddress"
-        android:orientation="vertical" >
+        android:layout_weight="1.0" >
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/log_to_accessory"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <ScrollView
+            android:id="@+id/logWriteToAccessory"
             android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1.0" >
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:typeface="monospace" />
+    </ScrollView>
 
-            <TextView
-                android:id="@+id/logWriteToAccessory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textIsSelectable="true"
-                android:typeface="monospace" />
-        </ScrollView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/log_from_accessory"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1.0" >
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/log_from_accessory"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <ScrollView
+            android:id="@+id/logReadFromAccessory"
             android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1.0" >
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:typeface="monospace" />
+    </ScrollView>
 
-            <TextView
-                android:id="@+id/logReadFromAccessory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textIsSelectable="true"
-                android:typeface="monospace" />
-        </ScrollView>
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

@@ -9,20 +9,28 @@ import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.wigwamlabs.websockettest.BridgeService.LocalBinder;
 
 public class MainActivity extends Activity implements ServiceConnection, BridgeService.Callback {
+    private static final int ACCESSORY_DISCONNECTED = 0;
+    private static final int ACCESSORY_CONNECTED = 1;
+    private static final int ACCESSORY_AVAILABLE = 2;
     protected BridgeService mService;
     private TextView mArduinoState;
+    private View mConnectButton;
     private TextView mWebSocketState;
     private TextView mWebSocketAddress;
     private TextView mLogReadFromAccessory;
     private TextView mLogWriteToAccessory;
+    private AccessoryDetector mAccessoryDetector;
+    private int mAccessoryState = ACCESSORY_DISCONNECTED;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +40,22 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         setContentView(R.layout.activity_main);
 
         mArduinoState = (TextView) findViewById(R.id.arduinoState);
+        mConnectButton = findViewById(R.id.connectAccessoryButton);
+        mConnectButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connectToAccessory();
+            }
+        });
         mWebSocketState = (TextView) findViewById(R.id.websocketState);
         mWebSocketAddress = (TextView) findViewById(R.id.websocketAddress);
         mLogReadFromAccessory = (TextView) findViewById(R.id.logReadFromAccessory);
         scrollToBottom(mLogReadFromAccessory);
         mLogWriteToAccessory = (TextView) findViewById(R.id.logWriteToAccessory);
         scrollToBottom(mLogWriteToAccessory);
+
+        // TODO move to service
+        mAccessoryDetector = new AccessoryDetector(this);
 
         bindBridgeService();
     }
@@ -54,7 +72,7 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         return (UsbAccessory) getIntent().getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
     }
 
-    private void openAccessoryIfNeeded(UsbAccessory accessory) {
+    void openAccessoryIfNeeded(UsbAccessory accessory) {
         if (mService == null) {
             return;
         }
@@ -109,6 +127,10 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     protected void onDestroy() {
         super.onDestroy();
 
+        if (mAccessoryDetector != null) {
+            mAccessoryDetector.onDestroy();
+        }
+
         unbindService(this);
         mService = null;
     }
@@ -125,6 +147,15 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         final Resources res = getResources();
         mArduinoState.setText(connected ? R.string.accessory_connected : R.string.accessory_disconnected);
         mArduinoState.setTextColor(res.getColor(connected ? R.color.green : R.color.red));
+        mAccessoryDetector.setEnabled(!connected);
+
+        if (connected) {
+            mAccessoryState = ACCESSORY_CONNECTED;
+        }
+        if (!connected && mAccessoryState == ACCESSORY_CONNECTED) {
+            mAccessoryState = ACCESSORY_DISCONNECTED;
+        }
+        updateAccessoryStateConnectVisibility();
 
         if (!connected) {
             if (mLogWriteToAccessory.getText().length() > 0) {
@@ -134,6 +165,23 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
                 appendToLog(mLogReadFromAccessory, "\n--------------------");
             }
         }
+    }
+
+    public void onAccessoryAvailable(UsbAccessory accessory) {
+        if (mAccessoryState != ACCESSORY_CONNECTED) {
+            mAccessoryState = (accessory == null ? ACCESSORY_DISCONNECTED : ACCESSORY_AVAILABLE);
+        }
+        updateAccessoryStateConnectVisibility();
+    }
+
+    private void updateAccessoryStateConnectVisibility() {
+        final boolean showConnect = (mAccessoryState == ACCESSORY_AVAILABLE);
+        mConnectButton.setVisibility(showConnect ? View.VISIBLE : View.GONE);
+        mArduinoState.setVisibility(showConnect ? View.GONE : View.VISIBLE);
+    }
+
+    protected void connectToAccessory() {
+        mAccessoryDetector.connect();
     }
 
     @Override

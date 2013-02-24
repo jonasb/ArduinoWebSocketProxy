@@ -119,7 +119,12 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
         if (mAccessory != null) {
             return;
         }
-        mAccessory = new Accessory(this, accessory, this);
+        try {
+            mAccessory = new Accessory(this, accessory, this);
+        } catch (final Exception e) {
+            Log.w(TAG, "Error when opening accessory: " + accessory, e);
+            return;
+        }
         notifyAccessoryStateChanged();
 
         mAccessoryDetachedBroadcastReceiver = new BroadcastReceiver() {

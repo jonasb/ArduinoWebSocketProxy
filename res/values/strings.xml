@@ -6,6 +6,7 @@
     <string name="arduino_label">Arduino:</string>
     <string name="accessory_connected">CONNECTED</string>
     <string name="accessory_disconnected">DISCONNECTED</string>
+    <string name="accessory_connect">CONNECT</string>
     <string name="websocket_label">WebSocket:</string>
 
     <plurals name="websocket_running">
