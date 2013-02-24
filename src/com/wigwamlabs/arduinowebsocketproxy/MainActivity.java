@@ -1,4 +1,4 @@
-package com.wigwamlabs.websockettest;
+package com.wigwamlabs.arduinowebsocketproxy;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -9,14 +9,13 @@ import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.wigwamlabs.websockettest.BridgeService.LocalBinder;
+import com.wigwamlabs.arduinowebsocketproxy.BridgeService.LocalBinder;
 
 public class MainActivity extends Activity implements ServiceConnection, BridgeService.Callback {
     private static final int ACCESSORY_DISCONNECTED = 0;
@@ -36,7 +35,6 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("XXX", "MainActivity.onCreate()");
         setContentView(R.layout.activity_main);
 
         mArduinoState = (TextView) findViewById(R.id.arduinoState);

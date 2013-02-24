@@ -1,4 +1,4 @@
-package com.wigwamlabs.websockettest;
+package com.wigwamlabs.arduinowebsocketproxy;
 
 import android.os.StrictMode;
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wigwamlabs.websockettest"
+    package="com.wigwamlabs.arduinowebsocketproxy"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.wigwamlabs.websockettest.MainActivity"
+            android:name="MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance" >
             <intent-filter>
@@ -35,7 +35,7 @@
         </activity>
 
         <service
-            android:name=".BridgeService"
+            android:name="BridgeService"
             android:exported="false" >
         </service>
     </application>

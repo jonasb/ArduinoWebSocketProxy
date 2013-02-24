@@ -1,4 +1,4 @@
-package com.wigwamlabs.websockettest;
+package com.wigwamlabs.arduinowebsocketproxy;
 
 import android.content.Context;
 import android.hardware.usb.UsbAccessory;

@@ -1,4 +1,4 @@
-package com.wigwamlabs.websockettest;
+package com.wigwamlabs.arduinowebsocketproxy;
 
 import android.util.Log;
 
