@@ -17,4 +17,37 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="divider">
+        <item name="android:background">@color/divider</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
+    </style>
+
+    <style name="header" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:layout_marginTop">6dp</item>
+    </style>
+
+    <style name="log" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:textIsSelectable">true</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="logScroll" parent="android:Widget.Holo.Light.ScrollView">
+        <item name="android:background">@color/logBackground</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+
+    <style name="state" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">bottom</item>
+    </style>
+
 </resources>

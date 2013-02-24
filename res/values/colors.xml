@@ -3,5 +3,7 @@
 
     <color name="green">#00929D</color>
     <color name="red">#E44D26</color>
+    <color name="divider">#ccc</color>
+    <color name="logBackground">#2ccc</color>
 
 </resources>
