@@ -25,8 +25,17 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     private static final int ACCESSORY_AVAILABLE = 2;
     protected BridgeService mService;
     private TextView mArduinoState;
+    private TextView mAccessoryManufacturerLabel;
+    private TextView mAccessoryManufacturer;
+    private TextView mAccessoryModelLabel;
+    private TextView mAccessoryModel;
+    private TextView mAccessoryDescriptionLabel;
+    private TextView mAccessoryDescription;
     private TextView mWebSocketState;
-    private TextView mWebSocketAddress;
+    private TextView mWebSocketServer;
+    private TextView mWebSocketServerLabel;
+    private TextView mWebSocketClient;
+    private TextView mWebSocketClientLabel;
     private TextView mLogReadFromAccessory;
     private TextView mLogWriteToAccessory;
     private AccessoryDetector mAccessoryDetector;
@@ -41,8 +50,17 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         setContentView(R.layout.activity_main);
 
         mArduinoState = (TextView) findViewById(R.id.arduinoState);
+        mAccessoryManufacturerLabel = (TextView) findViewById(R.id.accessoryManufacturerLabel);
+        mAccessoryManufacturer = (TextView) findViewById(R.id.accessoryManufacturer);
+        mAccessoryModelLabel = (TextView) findViewById(R.id.accessoryModelLabel);
+        mAccessoryModel = (TextView) findViewById(R.id.accessoryModel);
+        mAccessoryDescriptionLabel = (TextView) findViewById(R.id.accessoryDescriptionLabel);
+        mAccessoryDescription = (TextView) findViewById(R.id.accessoryDescription);
         mWebSocketState = (TextView) findViewById(R.id.websocketState);
-        mWebSocketAddress = (TextView) findViewById(R.id.websocketAddress);
+        mWebSocketServerLabel = (TextView) findViewById(R.id.websocketServerLabel);
+        mWebSocketServer = (TextView) findViewById(R.id.websocketServer);
+        mWebSocketClientLabel = (TextView) findViewById(R.id.websocketClientLabel);
+        mWebSocketClient = (TextView) findViewById(R.id.websocketClient);
         mLogReadFromAccessory = (TextView) findViewById(R.id.logReadFromAccessory);
         scrollToBottom(mLogReadFromAccessory);
         mLogWriteToAccessory = (TextView) findViewById(R.id.logWriteToAccessory);
@@ -174,7 +192,7 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     }
 
     @Override
-    public void onAccessoryState(boolean connected) {
+    public void onAccessoryState(boolean connected, UsbAccessory accessory) {
         final Resources res = getResources();
         mArduinoState.setText(connected ? R.string.accessory_connected : R.string.accessory_disconnected);
         mArduinoState.setTextColor(res.getColor(connected ? R.color.green : R.color.red));
@@ -186,7 +204,7 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         if (!connected && mAccessoryState == ACCESSORY_CONNECTED) {
             mAccessoryState = ACCESSORY_DISCONNECTED;
         }
-        updateAccessoryStateConnectVisibility();
+        updateAccessoryStateConnectVisibility(accessory);
 
         if (!connected) {
             if (mLogWriteToAccessory.getText().length() > 0) {
@@ -202,13 +220,25 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
         if (mAccessoryState != ACCESSORY_CONNECTED) {
             mAccessoryState = (accessory == null ? ACCESSORY_DISCONNECTED : ACCESSORY_AVAILABLE);
         }
-        updateAccessoryStateConnectVisibility();
+        updateAccessoryStateConnectVisibility(accessory);
     }
 
-    private void updateAccessoryStateConnectVisibility() {
+    private void updateAccessoryStateConnectVisibility(UsbAccessory accessory) {
         if (mConnectMenuItem != null) {
             mConnectMenuItem.setVisible(mAccessoryState == ACCESSORY_AVAILABLE);
         }
+        final int visibility = (getResources().getBoolean(R.bool.showAccessoryDetails) && accessory != null ? View.VISIBLE : View.GONE);
+        if (visibility == View.VISIBLE) {
+            mAccessoryManufacturer.setText(accessory.getManufacturer());
+            mAccessoryModel.setText(accessory.getModel());
+            mAccessoryDescription.setText(accessory.getDescription());
+        }
+        mAccessoryManufacturerLabel.setVisibility(visibility);
+        mAccessoryManufacturer.setVisibility(visibility);
+        mAccessoryModelLabel.setVisibility(visibility);
+        mAccessoryModel.setVisibility(visibility);
+        mAccessoryDescriptionLabel.setVisibility(visibility);
+        mAccessoryDescription.setVisibility(visibility);
     }
 
     protected void connectToAccessory() {
@@ -216,18 +246,26 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     }
 
     @Override
-    public void onWebSocketState(boolean running, int port, int clients) {
+    public void onWebSocketState(boolean running, int port, int clients, String connectionInfo) {
         final Resources res = getResources();
         mWebSocketState.setText(running ? res.getQuantityString(R.plurals.websocket_running, clients, clients) : res.getString(R.string.websocket_stopped));
         mWebSocketState.setTextColor(res.getColor(running ? R.color.green : R.color.red));
 
-        if (running) {
+        int visibility = View.GONE;
+        if (running && res.getBoolean(R.bool.showWebSocketServer)) {
             final String ipAddress = NetworkUtils.getIPAddress();
-            mWebSocketAddress.setText(String.format("ws://%s:%d", ipAddress, port));
-            mWebSocketAddress.setVisibility(ipAddress.length() > 0 ? View.VISIBLE : View.GONE);
-        } else {
-            mWebSocketAddress.setVisibility(View.GONE);
+            mWebSocketServer.setText(String.format("ws://%s:%d", ipAddress, port));
+            if (ipAddress.length() > 0) {
+                visibility = View.VISIBLE;
+            }
         }
+        mWebSocketServerLabel.setVisibility(visibility);
+        mWebSocketServer.setVisibility(visibility);
+
+        mWebSocketClient.setText(connectionInfo);
+        visibility = (connectionInfo.length() > 0 && res.getBoolean(R.bool.showWebSocketClient) ? View.VISIBLE : View.GONE);
+        mWebSocketClientLabel.setVisibility(visibility);
+        mWebSocketClient.setVisibility(visibility);
     }
 
     @Override

@@ -19,9 +19,9 @@ import java.util.ArrayList;
 
 public class BridgeService extends Service implements Accessory.Callback, WebSocketServer.Callback {
     interface Callback {
-        void onAccessoryState(boolean connected);
+        void onAccessoryState(boolean connected, UsbAccessory accessory);
 
-        void onWebSocketState(boolean running, int port, int clients);
+        void onWebSocketState(boolean running, int port, int clients, String connectionInfo);
 
         void onWriteToAccessory(byte[] bytes);
 
@@ -105,15 +105,18 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     }
 
     private void notifyWebSocketStateChanged() {
-        final int clients = (mWebSocketServer == null ? 0 : mWebSocketServer.getClientCount());
         for (final Callback c : mCallbacks) {
-            c.onWebSocketState(mWebSocketServer != null, mWebSocketServer != null ? mWebSocketServer.getPort() : 0, clients);
+            if (mWebSocketServer == null) {
+                c.onWebSocketState(false, 0, 0, "");
+            } else {
+                c.onWebSocketState(true, mWebSocketServer.getPort(), mWebSocketServer.getClientCount(), mWebSocketServer.getConnectionInfo());
+            }
         }
     }
 
     private void notifyAccessoryStateChanged() {
         for (final Callback c : mCallbacks) {
-            c.onAccessoryState(mAccessory != null);
+            c.onAccessoryState(mAccessory != null, mAccessory != null ? mAccessory.getAccessory() : null);
         }
     }
 

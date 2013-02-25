@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <item name="layoutLogsHorizontally" type="bool">false</item>
     <item name="showAccessoryDetails" type="bool">true</item>
-    <item name="showWebSocketServer" type="bool">true</item>
     <item name="showWebSocketClient" type="bool">true</item>
-    <item name="default_port" type="integer">8080</item>
 
 </resources>

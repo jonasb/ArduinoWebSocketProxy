@@ -21,13 +21,15 @@ public class Accessory {
     }
 
     private static final String TAG = Accessory.class.getSimpleName();
+    private final UsbAccessory mAccessory;
+    private final Callback mCallback;
     private final ParcelFileDescriptor mFileDescriptor;
     private FileInputStream mInputStream;
     private FileOutputStream mOutputStream;
     private final Handler mHandler = new Handler();
-    private final Callback mCallback;
 
     public Accessory(Context context, UsbAccessory accessory, Callback callback) {
+        mAccessory = accessory;
         mCallback = callback;
         final UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         mFileDescriptor = manager.openAccessory(accessory);
@@ -103,5 +105,9 @@ public class Accessory {
                 mCallback.onAccessoryError();
             }
         }
+    }
+
+    public UsbAccessory getAccessory() {
+        return mAccessory;
     }
 }

@@ -105,4 +105,11 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
             mWebSocketConnection.send(buf);
         }
     }
+
+    public String getConnectionInfo() {
+        if (mWebSocketConnection == null) {
+            return "";
+        }
+        return mWebSocketConnection.getRemoteSocketAddress().getAddress().getHostAddress();
+    }
 }

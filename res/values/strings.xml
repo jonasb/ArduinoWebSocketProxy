@@ -6,6 +6,9 @@
     <string name="arduino_label">Arduino</string>
     <string name="accessory_connected">CONNECTED</string>
     <string name="accessory_disconnected">DISCONNECTED</string>
+    <string name="headerManufacturer">MANUFACTURER</string>
+    <string name="headerModel">MODEL</string>
+    <string name="headerDescription">DESCRIPTION</string>
     <string name="accessory_connect">Connect</string>
     <string name="websocket_label">WebSocket</string>
 
@@ -15,6 +18,8 @@
     </plurals>
 
     <string name="websocket_stopped">STOPPED</string>
+    <string name="headerServer">SERVER</string>
+    <string name="headerClient">CLIENT</string>
     <string name="log_to_accessory">To Arduino</string>
     <string name="log_from_accessory">To WebSocket</string>
     <string name="title_activity_settings">Settings</string>

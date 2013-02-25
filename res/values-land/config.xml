@@ -2,5 +2,7 @@
 <resources>
 
     <item name="layoutLogsHorizontally" type="bool">true</item>
+    <item name="showAccessoryDetails" type="bool">false</item>
+    <item name="showWebSocketClient" type="bool">false</item>
 
 </resources>

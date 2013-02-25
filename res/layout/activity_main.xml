@@ -9,57 +9,106 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <LinearLayout
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:columnCount="2" >
 
-        <TextView
-            android:id="@+id/arduino"
-            style="@style/header"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:text="@string/arduino_label" />
+            android:layout_columnSpan="2"
+            android:orientation="horizontal" >
+
+            <TextView
+                style="@style/header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/arduino_label" />
+
+            <TextView
+                android:id="@+id/arduinoState"
+                style="@style/state"
+                android:text="@string/accessory_disconnected" />
+        </LinearLayout>
+
+        <View
+            style="@style/divider"
+            android:layout_columnSpan="2" />
 
         <TextView
-            android:id="@+id/arduinoState"
-            style="@style/state"
-            android:text="@string/accessory_disconnected" />
-    </LinearLayout>
-
-    <View style="@style/divider" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+            android:id="@+id/accessoryManufacturerLabel"
+            style="@style/cellHeader"
+            android:text="@string/headerManufacturer" />
 
         <TextView
-            android:id="@+id/websocket"
-            style="@style/header"
-            android:layout_width="0dp"
+            android:id="@+id/accessoryManufacturer"
+            style="@style/cellInfo" />
+
+        <TextView
+            android:id="@+id/accessoryModelLabel"
+            style="@style/cellHeader"
+            android:text="@string/headerModel" />
+
+        <TextView
+            android:id="@+id/accessoryModel"
+            style="@style/cellInfo" />
+
+        <TextView
+            android:id="@+id/accessoryDescriptionLabel"
+            style="@style/cellHeader"
+            android:text="@string/headerDescription" />
+
+        <TextView
+            android:id="@+id/accessoryDescription"
+            style="@style/cellInfo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:text="@string/websocket_label" />
+            android:layout_columnSpan="2"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/websocket"
+                style="@style/header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/websocket_label" />
+
+            <TextView
+                android:id="@+id/websocketState"
+                style="@style/state"
+                android:text="@string/websocket_stopped" />
+        </LinearLayout>
+
+        <View
+            style="@style/divider"
+            android:layout_columnSpan="2" />
 
         <TextView
-            android:id="@+id/websocketState"
-            style="@style/state"
-            android:text="@string/websocket_stopped" />
-    </LinearLayout>
+            android:id="@+id/websocketServerLabel"
+            style="@style/cellHeader"
+            android:text="@string/headerServer" />
 
-    <View style="@style/divider" />
+        <TextView
+            android:id="@+id/websocketServer"
+            style="@style/cellInfo"
+            android:typeface="monospace"
+            android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/websocketAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="6dp"
-        android:textIsSelectable="true"
-        android:typeface="monospace"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/websocketClientLabel"
+            style="@style/cellHeader"
+            android:text="@string/headerClient" />
+
+        <TextView
+            android:id="@+id/websocketClient"
+            style="@style/cellInfo"
+            android:typeface="monospace" />
+    </GridLayout>
 
     <LinearLayout
         android:id="@+id/logContainer"
