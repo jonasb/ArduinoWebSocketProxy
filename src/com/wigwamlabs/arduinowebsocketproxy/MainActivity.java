@@ -162,8 +162,12 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        if (item.getItemId() == R.id.action_connect) {
+        switch (item.getItemId()) {
+        case R.id.action_connect:
             connectToAccessory();
+            return true;
+        case R.id.action_settings:
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
@@ -212,14 +216,14 @@ public class MainActivity extends Activity implements ServiceConnection, BridgeS
     }
 
     @Override
-    public void onWebSocketState(boolean running, int clients) {
+    public void onWebSocketState(boolean running, int port, int clients) {
         final Resources res = getResources();
         mWebSocketState.setText(running ? res.getQuantityString(R.plurals.websocket_running, clients, clients) : res.getString(R.string.websocket_stopped));
         mWebSocketState.setTextColor(res.getColor(running ? R.color.green : R.color.red));
 
         if (running) {
             final String ipAddress = NetworkUtils.getIPAddress();
-            mWebSocketAddress.setText(String.format("ws://%s:%d", ipAddress, 8080));
+            mWebSocketAddress.setText(String.format("ws://%s:%d", ipAddress, port));
             mWebSocketAddress.setVisibility(ipAddress.length() > 0 ? View.VISIBLE : View.GONE);
         } else {
             mWebSocketAddress.setVisibility(View.GONE);

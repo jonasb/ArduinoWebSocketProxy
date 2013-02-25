@@ -23,8 +23,8 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
     private final Callback mCallback;
     private final Handler mHandler = new Handler();
 
-    WebSocketServer(Callback callback) {
-        super(new InetSocketAddress(8080));
+    WebSocketServer(Callback callback, int port) {
+        super(new InetSocketAddress(port));
         mCallback = callback;
         // WebSocket.DEBUG = true;
         start();

@@ -17,5 +17,10 @@
     <string name="websocket_stopped">STOPPED</string>
     <string name="log_to_accessory">To Arduino</string>
     <string name="log_from_accessory">To WebSocket</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_header_general">General</string>
+    <string name="pref_header_websocket">WebSocket server</string>
+    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_websocket_port">Port</string>
 
 </resources>

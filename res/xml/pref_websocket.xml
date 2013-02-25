@@ -1,0 +1,11 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.wigwamlabs.arduinowebsocketproxy" >
+
+    <com.wigwamlabs.arduinowebsocketproxy.NumberPickerPreference
+        android:defaultValue="@integer/default_port"
+        android:key="websocket_port"
+        android:title="@string/pref_websocket_port"
+        app:max="65534"
+        app:min="1024" />
+
+</PreferenceScreen>

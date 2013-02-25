@@ -5,11 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
@@ -19,7 +21,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     interface Callback {
         void onAccessoryState(boolean connected);
 
-        void onWebSocketState(boolean running, int clients);
+        void onWebSocketState(boolean running, int port, int clients);
 
         void onWriteToAccessory(byte[] bytes);
 
@@ -105,7 +107,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     private void notifyWebSocketStateChanged() {
         final int clients = (mWebSocketServer == null ? 0 : mWebSocketServer.getClientCount());
         for (final Callback c : mCallbacks) {
-            c.onWebSocketState(mWebSocketServer != null, clients);
+            c.onWebSocketState(mWebSocketServer != null, mWebSocketServer != null ? mWebSocketServer.getPort() : 0, clients);
         }
     }
 
@@ -193,7 +195,9 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
             return;
         }
 
-        mWebSocketServer = new WebSocketServer(this);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        final int port = prefs.getInt("websocket_port", getResources().getInteger(R.integer.default_port));
+        mWebSocketServer = new WebSocketServer(this, port);
         notifyWebSocketStateChanged();
     }
 
