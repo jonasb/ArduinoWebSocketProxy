@@ -3,7 +3,7 @@
 
     <usb-accessory
         manufacturer="Wigwam Labs"
-        model="test"
+        model="Arduino WebSocket proxy"
         version="1.0" />
 
 </resources>
