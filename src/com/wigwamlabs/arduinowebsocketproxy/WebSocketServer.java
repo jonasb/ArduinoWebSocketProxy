@@ -39,6 +39,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public synchronized void onOpen(WebSocket conn, ClientHandshake handshake) {
+        Debug.logWebSocket("WebSocket onOpen()");
         if (mWebSocketConnection != null) {
             mWebSocketConnection.close(0); // TODO
         }
@@ -49,6 +50,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public synchronized void onClose(WebSocket conn, int code, String reason, boolean remote) {
+        Debug.logWebSocket("WebSocket onClose()");
         if (mWebSocketConnection == conn) {
             mWebSocketConnection = null;
 
@@ -67,6 +69,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public synchronized void onMessage(WebSocket conn, final ByteBuffer message) {
+        Debug.logWebSocket("WebSocket onMessage()", message.array());
         if (conn == mWebSocketConnection) {
             mHandler.post(new Runnable() {
                 @Override
@@ -81,6 +84,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public synchronized void onMessage(WebSocket conn, final String message) {
+        Debug.logWebSocket("WebSocket onMessage() " + message);
         if (conn == mWebSocketConnection) {
             mHandler.post(new Runnable() {
                 @Override
@@ -94,6 +98,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
     }
 
     public synchronized void send(byte[] buf) {
+        Debug.logWebSocket("WebSocket send()", buf);
         if (mWebSocketConnection != null) {
             mWebSocketConnection.send(buf);
         }
