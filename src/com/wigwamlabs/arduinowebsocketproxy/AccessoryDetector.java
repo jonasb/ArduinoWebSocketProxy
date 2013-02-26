@@ -9,7 +9,6 @@ import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class AccessoryDetector {
     protected static final String TAG = AccessoryDetector.class.getSimpleName();
@@ -86,8 +85,6 @@ public class AccessoryDetector {
                         if (accessory != null) {
                             mActivity.openAccessoryIfNeeded(accessory);
                         }
-                    } else {
-                        Log.d(TAG, "permission denied for accessory " + accessory);
                     }
                 }
             }

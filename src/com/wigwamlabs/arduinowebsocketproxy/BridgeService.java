@@ -12,7 +12,6 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
         }
     }
 
-    private static final String TAG = BridgeService.class.getSimpleName();
     private final IBinder mBinder = new LocalBinder();
     private Accessory mAccessory;
     private BroadcastReceiver mAccessoryDetachedBroadcastReceiver;
@@ -45,7 +43,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate()");
+        Debug.logLifecycle("BridgeService onCreate()");
         super.onCreate();
     }
 
@@ -71,7 +69,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy()");
+        Debug.logLifecycle("BridgeService onDestroy()");
         super.onDestroy();
 
         closeAccessory();
@@ -127,7 +125,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
         try {
             mAccessory = new Accessory(this, accessory, this);
         } catch (final Exception e) {
-            Log.w(TAG, "Error when opening accessory: " + accessory, e);
+            Debug.logException("Error when opening accessory: " + accessory, e);
             return;
         }
         notifyAccessoryStateChanged();
@@ -169,7 +167,6 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
     }
 
     public void writeToAccessory(byte[] bytes) {
-        Log.d(TAG, "writeToAccessory() " + new String(bytes));
         if (mAccessory != null) {
             mAccessory.write(bytes);
             for (final Callback c : mCallbacks) {
@@ -180,7 +177,6 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
 
     @Override
     public void onReadFromAccessory(byte[] bytes) {
-        Log.d(TAG, "onReadFromAccessory() " + new String(bytes));
         mWebSocketServer.send(bytes);
         for (final Callback c : mCallbacks) {
             c.onReadFromAccessory(bytes);
@@ -189,7 +185,6 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
 
     @Override
     public void onAccessoryError() {
-        Log.d(TAG, "onAccessoryError()");
         closeAccessory();
     }
 
@@ -209,7 +204,7 @@ public class BridgeService extends Service implements Accessory.Callback, WebSoc
             try {
                 mWebSocketServer.stop(500);
             } catch (final Exception e) {
-                Log.e(TAG, "Exception when closing server", e);
+                Debug.logException("Exception when closing server", e);
             }
             mWebSocketServer = null;
             notifyWebSocketStateChanged();

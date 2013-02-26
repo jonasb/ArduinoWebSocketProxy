@@ -5,7 +5,6 @@ import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -20,7 +19,6 @@ public class Accessory {
         void onAccessoryError();
     }
 
-    private static final String TAG = Accessory.class.getSimpleName();
     private final UsbAccessory mAccessory;
     private final Callback mCallback;
     private final ParcelFileDescriptor mFileDescriptor;
@@ -66,7 +64,7 @@ public class Accessory {
                         });
 
                     } catch (final IOException e) {
-                        Log.e(TAG, "Error while reading from accessory", e);
+                        Debug.logException("Error while reading from accessory", e);
                         break;
                     }
                 }
@@ -88,7 +86,7 @@ public class Accessory {
             try {
                 mFileDescriptor.close();
             } catch (final IOException e) {
-                Log.e(TAG, "Exception when closing file descriptor", e);
+                Debug.logException("Exception when closing file descriptor", e);
             }
         }
 
@@ -101,7 +99,7 @@ public class Accessory {
             try {
                 mOutputStream.write(bytes);
             } catch (final IOException e) {
-                Log.e(TAG, "Exception when writing to accessory", e);
+                Debug.logException("Exception when writing to accessory", e);
                 mCallback.onAccessoryError();
             }
         }

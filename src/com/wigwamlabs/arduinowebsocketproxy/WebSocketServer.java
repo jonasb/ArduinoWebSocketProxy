@@ -1,7 +1,6 @@
 package com.wigwamlabs.arduinowebsocketproxy;
 
 import android.os.Handler;
-import android.util.Log;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -18,7 +17,6 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
         void onWebSocketConnectionsChanged();
     }
 
-    private static final String TAG = WebSocketServer.class.getSimpleName();
     protected WebSocket mWebSocketConnection;
     private final Callback mCallback;
     private final Handler mHandler = new Handler();
@@ -43,7 +41,6 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        Log.d(TAG, "onOpen()");
         if (mWebSocketConnection != null) {
             mWebSocketConnection.close(0); // TODO
         }
@@ -54,7 +51,6 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        Log.d(TAG, "onClose()");
         if (mWebSocketConnection == conn) {
             mWebSocketConnection = null;
 
@@ -68,7 +64,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        Log.d(TAG, "onError()", ex);
+        Debug.logException("WebSocket", ex);
     }
 
     @Override
@@ -87,7 +83,6 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, final String message) {
-        Log.d(TAG, String.format("onMessage(%s)", message));
         if (conn == mWebSocketConnection) {
             mHandler.post(new Runnable() {
                 @Override
