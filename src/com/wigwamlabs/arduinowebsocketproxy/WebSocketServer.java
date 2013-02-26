@@ -26,8 +26,6 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
         mCallback = callback;
         // WebSocket.DEBUG = true;
         start();
-
-        // TODO synchronize access to mWebSocketConnection
     }
 
     private void notifyConnectionsChanged() {
@@ -40,7 +38,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
     }
 
     @Override
-    public void onOpen(WebSocket conn, ClientHandshake handshake) {
+    public synchronized void onOpen(WebSocket conn, ClientHandshake handshake) {
         if (mWebSocketConnection != null) {
             mWebSocketConnection.close(0); // TODO
         }
@@ -50,7 +48,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
     }
 
     @Override
-    public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+    public synchronized void onClose(WebSocket conn, int code, String reason, boolean remote) {
         if (mWebSocketConnection == conn) {
             mWebSocketConnection = null;
 
@@ -58,7 +56,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
         }
     }
 
-    public int getClientCount() {
+    public synchronized int getClientCount() {
         return (mWebSocketConnection == null ? 0 : 1);
     }
 
@@ -68,7 +66,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
     }
 
     @Override
-    public void onMessage(WebSocket conn, final ByteBuffer message) {
+    public synchronized void onMessage(WebSocket conn, final ByteBuffer message) {
         if (conn == mWebSocketConnection) {
             mHandler.post(new Runnable() {
                 @Override
@@ -82,7 +80,7 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
     }
 
     @Override
-    public void onMessage(WebSocket conn, final String message) {
+    public synchronized void onMessage(WebSocket conn, final String message) {
         if (conn == mWebSocketConnection) {
             mHandler.post(new Runnable() {
                 @Override
@@ -95,13 +93,13 @@ final class WebSocketServer extends org.java_websocket.server.WebSocketServer {
         }
     }
 
-    public void send(byte[] buf) {
+    public synchronized void send(byte[] buf) {
         if (mWebSocketConnection != null) {
             mWebSocketConnection.send(buf);
         }
     }
 
-    public String getConnectionInfo() {
+    public synchronized String getConnectionInfo() {
         if (mWebSocketConnection == null) {
             return "";
         }
