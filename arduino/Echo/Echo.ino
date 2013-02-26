@@ -1,10 +1,10 @@
 #include <AndroidAccessory.h>
 
 AndroidAccessory usb("Wigwam Labs",
-                      "Arduino WebSocket proxy", 
+                      "Arduino WebSocket proxy",
                       "Enables HTML pages to communicate with an Arduino",
                       "1.0",
-                      "http://wigwamlabs.com",
+                      "http://play.google.com/store/apps/details?id=com.wigwamlabs.arduinowebsocketproxy",
                       "1");
 
 int pinConnectionLed = 13;
