@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>WebSocket Test</title>
+
+<style>
+  #output {
+    font-family: monospace;
+  }
+</style>
+
+<script language="javascript" type="text/javascript">
+  var wsUri = "ws://127.0.0.1:8080/";
+  var output;
+
+  function init() {
+    output = document.getElementById("output");
+    testWebSocket();
+  }
+
+  function testWebSocket() {
+    writeToScreen('status', 'connecting to ' + wsUri);
+    websocket = new WebSocket(wsUri);
+    websocket.binaryType = 'arraybuffer';
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+  }
+
+  function onOpen(evt) {
+    writeToScreen('status', 'connected');
+    doSend("Hello world!");
+
+    var bytes = new Uint8Array(5);
+    bytes[0] = 0;
+    bytes[1] = 255;
+    bytes[2] = 1;
+    bytes[3] = 1;
+    bytes[4] = 0;
+    doSend(bytes);
+  }
+
+  function onClose(evt) {
+    writeToScreen('status', 'disconnected');
+  }
+
+  function format(data) {
+    if (data instanceof Uint8Array) {
+      return uint8arrayToString(data);
+    }
+    if (data instanceof ArrayBuffer) {
+      return uint8arrayToString(new Uint8Array(data));
+    }
+    return '"' + data + '"';
+  }
+
+  function uint8arrayToString(bytes) {
+    var s = '';
+    for (var i = 0; i < bytes.length; i++) {
+      var b = bytes[i];
+      if (b < 16) s += '0';
+      s += b.toString(16) + ' ';
+    }
+    return s;
+  }
+
+  function onMessage(evt) {
+    writeToScreen('response', format(evt.data));
+  }
+
+  function onError(evt) {
+    writeToScreen('error', evt.data);
+  }
+
+  function doSend(message) {
+    writeToScreen('sent', format(message));
+    websocket.send(message);
+  }
+
+  function writeToScreen(klass, message) {
+    var pre = document.createElement("p");
+    pre.classList.add(klass);
+    pre.innerHTML = klass + ": " + message;
+    output.appendChild(pre);
+  }
+
+  window.addEventListener("load", init, false);
+</script>
+</head>
+<body>
+<h2>WebSocket Test</h2>
+<div id="output" />
+</body>
+</html>
